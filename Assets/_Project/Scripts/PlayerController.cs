@@ -5,6 +5,8 @@ public class PlayerController : MonoBehaviour
     public float speed = 5f;
     public GameObject bulletPrefab;
     public Transform bulletSpawnPoint;
+    private GameObject bullet;
+    private bool isOnBullet;
 
     private void Update()
     {
@@ -16,13 +18,37 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Shoot();
+            if (isOnBullet)
+            {
+                Time.timeScale = 1f;
+                transform.SetParent(null);
+                isOnBullet = false;
+            }
+            else
+            {
+                bullet = GetClosestBullet();
+                if (bullet != null)
+                {
+                    Time.timeScale = 0.01f;
+                    LeanTween.move(gameObject, bullet.transform.position, 0.01f);
+                    transform.SetParent(bullet.transform);
+                    isOnBullet = true;
+                }
+            }
         }
     }
 
-    private void Shoot()
+    private GameObject GetClosestBullet()
     {
-        Instantiate(bulletPrefab, bulletSpawnPoint.position, Quaternion.identity);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f);
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.CompareTag("Bullet"))
+            {
+                return collider.gameObject;
+            }
+        }
+
+        return null;
     }
 }
-

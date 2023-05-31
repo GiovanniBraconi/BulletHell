@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BulletController : MonoBehaviour
 {
-    public float speed = 10f;
+    [SerializeField] private float speed = 10f;
 
     private void Update()
     {
@@ -13,4 +13,15 @@ public class BulletController : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public void SetDirection(Vector2 direction)
+    {
+        transform.up = direction;
+    }
+
+    public void SetSpeed(float speed)
+    {
+        this.speed = speed;
+    }
+    
 }
