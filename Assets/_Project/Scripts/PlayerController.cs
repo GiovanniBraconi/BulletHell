@@ -1,40 +1,54 @@
+using System;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     public float speed = 5f;
+    private Rigidbody2D rb;
+    private Vector2 movement;
+    private Vector2 releaseForce;
     public GameObject bulletPrefab;
     public Transform bulletSpawnPoint;
     private GameObject bullet;
-    private bool isOnBullet;
+    private GameObject arrow;
+    private GameObject[] bullets;
+    [SerializeField] private GameObject victoryText;
 
-    private void Update()
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void FixedUpdate()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
+        movement = new Vector2(horizontalInput, verticalInput);
 
-        Vector3 movement = new Vector3(horizontalInput, verticalInput, 0f) * speed * Time.deltaTime;
-        transform.Translate(movement);
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
         {
-            if (isOnBullet)
-            {
-                Time.timeScale = 1f;
-                transform.SetParent(null);
-                isOnBullet = false;
-            }
-            else
+            if (bullet == null)
             {
                 bullet = GetClosestBullet();
                 if (bullet != null)
                 {
-                    Time.timeScale = 0.01f;
-                    LeanTween.move(gameObject, bullet.transform.position, 0.01f);
+                    rb.velocity = Vector2.zero;
+                    LeanTween.move(gameObject, bullet.transform.position, 0.05f);
+                    Time.timeScale = 0.1f;
                     transform.SetParent(bullet.transform);
-                    isOnBullet = true;
+                }
+                else
+                {
+                    rb.velocity = (movement * speed);
                 }
             }
+        }
+        else
+        {
+            rb.velocity = (movement * speed);
+            Time.timeScale = 1f;
+            bullet = null;
+            transform.SetParent(null);
         }
     }
 
@@ -50,5 +64,18 @@ public class PlayerController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void ChangeBulletsSpeed(GameObject[] bullets, float speed)
+    {
+        foreach (var bullet in bullets)
+        {
+            bullet.GetComponent<BulletController>().SetSpeed(speed);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+       victoryText.SetActive(true); 
     }
 }

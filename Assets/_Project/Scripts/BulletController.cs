@@ -8,10 +8,15 @@ public class BulletController : MonoBehaviour
     {
         transform.Translate(Vector3.up * speed * Time.deltaTime);
 
-        if (transform.position.y > 10f)
+        if (IsOutOfBoundaries())
         {
             Destroy(gameObject);
         }
+    }
+
+    private bool IsOutOfBoundaries()
+    {
+        return transform.position.y > 10f || transform.position.y < -10f || transform.position.x > 10f || transform.position.x < -10f;
     }
 
     public void SetDirection(Vector2 direction)

@@ -39,18 +39,5 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("PlayerBullet"))
-        {
-            // Handle the enemy being hit by the player's bullet
-            // You can decrement health, play an explosion effect, etc.
-            
-            // Destroy the bullet that hit the enemy
-            Destroy(collision.gameObject);
-            
-            // Destroy the enemy itself
-            Destroy(gameObject);
-        }
-    }
+
 }
